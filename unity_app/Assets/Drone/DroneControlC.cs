@@ -30,7 +30,7 @@ public class DroneControlC : MonoBehaviour {
 		LastDroneRotation = DisplayHeadData.rotation;
 
 		// left hand angular velocity
-		Drone.angularVelocity = new Vector3(0, DisplayAndSendLeftHandPosition.relativePos.y, 0);
+		Drone.angularVelocity = new Vector3(0, 10 * DisplayAndSendLeftHandPosition.relativePos.x, 0);
 
 		// gravity
 		Drone.AddForce(0,9.80665f,0);

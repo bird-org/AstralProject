@@ -19,7 +19,7 @@ public class DisplayHeadData : MonoBehaviour
     {
         Vector3 position = mainCamera.transform.position;
         rotation = mainCamera.transform.rotation;
-        rotation.eulerAngles = new Vector3(0, 0, 0); //testing
+        // rotation.eulerAngles = new Vector3(0, 0, 0); //testing
 
         // Display position and rotation data
         headDataText.text = $"Head Position: {position.ToString("F3")} \nHead Rotation: {rotation.eulerAngles.ToString("F3")}";
