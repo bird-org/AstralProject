@@ -14,6 +14,8 @@ public class DisplayAndSendLeftHandPosition : MonoBehaviour
     private UDPSender udpSender;
     public string handType = "left";
 
+    public Vector3 relativePos = new Vector3(0, 0, 0);
+
     void Start()
     {
         udpSender = new UDPSender("192.168.247.210", 12346);  // Use the IP and port of the machine you want to send data to
@@ -37,19 +39,21 @@ public class DisplayAndSendLeftHandPosition : MonoBehaviour
 
                 // Calculate the relative position and display it
                 Vector3 currentPos = skeleton.Bones[(int)OVRSkeleton.BoneId.Hand_ThumbTip].Transform.position;
-                Vector3 relativePos = currentPos - pinchStartPos;
+                relativePos = currentPos - pinchStartPos;
                 handPositionText.text += "\nThumb Pinch Relative Position: \n" + relativePos.ToString("F3");  // F3 to limit decimal places
                 udpSender.Send(handType + ": " + relativePos.ToString("F3"));
             }
             else
             {
                 pinchStarted = false;
+                relativePos = new Vector3(0, 0, 0);
                 handPositionText.text += "\nThumb Pinch: Not Pinching";
                 udpSender.Send(handType + ": not pinching");
             }
         }
         else
         {
+            relativePos = new Vector3(0, 0, 0); // testing
             handPositionText.text = "Hand not tracked.";
         }
     }
