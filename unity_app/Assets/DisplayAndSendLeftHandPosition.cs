@@ -7,7 +7,8 @@ public class DisplayAndSendLeftHandPosition : MonoBehaviour
     public OVRHand hand;
     public OVRSkeleton skeleton;
     public TextMeshPro handPositionText;
-
+    public OVRCameraRig cameraRig;
+    
     private Vector3 pinchStartPos;
     private bool pinchStarted = false;
 
@@ -30,15 +31,17 @@ public class DisplayAndSendLeftHandPosition : MonoBehaviour
             // Check if thumb is pinching
             if (hand.GetFingerIsPinching(OVRHand.HandFinger.Thumb))
             {
-                // If pinch just started, store the start position
+                // If pinch just started, store the start position in the head's local coordinate space
                 if (!pinchStarted)
                 {
-                    pinchStartPos = skeleton.Bones[(int)OVRSkeleton.BoneId.Hand_ThumbTip].Transform.position;
+                    pinchStartPos = cameraRig.centerEyeAnchor.InverseTransformPoint(
+                        skeleton.Bones[(int)OVRSkeleton.BoneId.Hand_ThumbTip].Transform.position);
                     pinchStarted = true;
                 }
 
                 // Calculate the relative position and display it
-                Vector3 currentPos = skeleton.Bones[(int)OVRSkeleton.BoneId.Hand_ThumbTip].Transform.position;
+                Vector3 currentPos = cameraRig.centerEyeAnchor.InverseTransformPoint(
+                    skeleton.Bones[(int)OVRSkeleton.BoneId.Hand_ThumbTip].Transform.position);
                 relativePos = currentPos - pinchStartPos;
                 handPositionText.text += "\nThumb Pinch Relative Position: \n" + relativePos.ToString("F3");  // F3 to limit decimal places
                 udpSender.Send(handType + ": " + relativePos.ToString("F3"));
@@ -53,7 +56,7 @@ public class DisplayAndSendLeftHandPosition : MonoBehaviour
         }
         else
         {
-            relativePos = new Vector3(0, 0, 0); // testing
+            relativePos = new Vector3(0, 0, 0);  // testing
             handPositionText.text = "Hand not tracked.";
         }
     }
